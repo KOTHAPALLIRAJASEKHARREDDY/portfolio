@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rajasekhar Reddy Kothapalli — Backend & Distributed Systems Engineer | Java · Python · Streaming</title>
+<meta name="description" content="Backend & systems engineer with 2+ years at Zoho building large-scale VOD streaming, WebRTC, and edge PoP platforms — cut fetch & render times 40%. M.S. Computer Science completed May 2026. Available now for full-time SWE roles.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#171028;
+    --panel:rgba(23,16,40,.78);
+    --line:rgba(180,150,200,.22);
+    --text:#f4eefa;
+    --muted:#b9a8c9;
+    --packet:#ffb454;
+    --node:#7dd6ff;
+    --ok:#4ade80;
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);color:var(--text);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:16px;line-height:1.6;overflow-x:hidden;
+  }
+  ::selection{background:var(--packet);color:var(--ink)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--node);outline-offset:3px;border-radius:4px}
+
+  /* ---------- fixed 3D world ---------- */
+  #scene{position:fixed;inset:0;z-index:0}
+
+  /* ---------- top bar ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:20;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 26px;
+    background:linear-gradient(rgba(23,16,40,.85),rgba(23,16,40,0));
+  }
+  .logo{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--node);letter-spacing:.04em;text-decoration:none}
+  .logo b{color:var(--text)}
+  .top-cta{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-decoration:none;
+    color:#241a36;background:var(--packet);padding:8px 16px;border-radius:999px;font-weight:500;
+  }
+
+  /* ---------- chapter dots ---------- */
+  .dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:14px}
+  .dots a{width:9px;height:9px;border-radius:50%;display:block;background:rgba(185,168,201,.4);transition:background .3s,transform .3s}
+  .dots a.active{background:var(--packet);transform:scale(1.5)}
+  .dots a:hover{background:var(--node)}
+  @media(max-width:760px){.dots{display:none}}
+
+  /* ---------- chapters ---------- */
+  .chapter{position:relative;z-index:2;height:230vh}
+  .chapter.tall{height:260vh}
+  .pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:90px 24px 40px}
+  .pin-inner{max-width:880px;width:100%;opacity:0;transform:translateY(36px);will-change:opacity,transform}
+  .center{text-align:center}
+
+  /* readability scrim behind text panels */
+  .panelize{
+    background:radial-gradient(ellipse at 50% 50%,rgba(23,16,40,.66),rgba(23,16,40,.18) 75%,transparent);
+    border-radius:24px;padding:34px 26px;
+  }
+
+  /* ---------- type ---------- */
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.12em;color:var(--node);text-transform:uppercase;margin-bottom:18px}
+  .eyebrow::before{content:"▸ ";color:var(--packet)}
+  h1{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(2.4rem,6.4vw,4.4rem);line-height:1.04;letter-spacing:-.02em;
+     text-shadow:0 2px 30px rgba(23,16,40,.8)}
+  h2{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(1.9rem,5vw,3.3rem);line-height:1.08;letter-spacing:-.02em;margin-bottom:18px;
+     text-shadow:0 2px 26px rgba(23,16,40,.85)}
+  .accent{color:var(--packet)}
+  .lead{color:var(--muted);font-size:clamp(1rem,2vw,1.16rem);max-width:640px;margin:18px auto 0}
+
+  .status-pill{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#9ff0bd;
+    border:1px solid rgba(126,226,168,.4);border-radius:999px;
+    padding:7px 16px;margin-bottom:24px;background:rgba(20,40,30,.45);
+  }
+  .status-pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+  .big-stat{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(4.2rem,15vw,10rem);line-height:1;color:var(--packet);
+    text-shadow:0 0 80px rgba(255,180,84,.45),0 2px 20px rgba(23,16,40,.9)}
+  .big-stat-label{font-family:'IBM Plex Mono',monospace;font-size:clamp(.85rem,1.8vw,1.05rem);color:var(--text);letter-spacing:.08em;margin-top:14px}
+
+  .hero-stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted)}
+  .hero-stats span b{display:block;font-size:1.5rem;color:var(--text);font-family:'Sora',sans-serif;font-weight:700}
+
+  .btn{display:inline-block;padding:13px 28px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;transition:transform .2s,box-shadow .2s}
+  .btn-primary{background:var(--packet);color:#241a36}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,180,84,.4)}
+  .btn-ghost{border:1px solid var(--line);color:var(--text);background:rgba(23,16,40,.45)}
+  .btn-ghost:hover{border-color:var(--node);color:var(--node)}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:36px}
+
+  .scroll-hint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text);
+    text-shadow:0 1px 12px rgba(23,16,40,.9);
+    animation:bob 2.4s ease-in-out infinite;white-space:nowrap}
+  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+
+  /* ---------- impact list ---------- */
+  .impact{list-style:none;margin-top:26px;text-align:left;max-width:680px;margin-left:auto;margin-right:auto}
+  .impact li{padding:13px 18px 13px 40px;position:relative;color:#e3d8ee;font-size:15px;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;backdrop-filter:blur(8px)}
+  .impact li::before{content:"";position:absolute;left:18px;top:1.4em;width:10px;height:2px;background:var(--packet)}
+  .impact li b{color:var(--text)}
+
+  /* ---------- project rail ---------- */
+  .rail{display:flex;gap:18px;overflow-x:auto;padding:26px 4px 18px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+  .rail::-webkit-scrollbar{height:6px}
+  .rail::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+  .card{flex:0 0 320px;scroll-snap-align:start;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 24px;backdrop-filter:blur(10px);transition:border-color .25s;text-align:left}
+  .card:hover{border-color:rgba(125,214,255,.5)}
+  .card .tag{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--packet);letter-spacing:.08em;text-transform:uppercase}
+  .card h3{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;margin:10px 0 10px}
+  .card p{color:var(--muted);font-size:14px}
+  .card .stack{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:#cdbdda}
+  .card .repo{display:inline-block;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--node);text-decoration:none}
+  .card .repo:hover{color:var(--packet)}
+  .rail-hint{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin-top:6px}
+
+  /* ---------- skills ---------- */
+  .skill-wall{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;max-width:760px;margin-left:auto;margin-right:auto}
+  .skill-wall .chip{font-size:13px;padding:8px 16px;background:var(--panel)}
+  .skill-wall .chip.hot{border-color:rgba(255,180,84,.55);color:var(--packet)}
+
+  /* ---------- education ---------- */
+  .edu-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:30px;text-align:left}
+  .edu-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px;backdrop-filter:blur(10px)}
+  .edu-card h3{font-family:'Sora',sans-serif;font-size:1.02rem;margin-bottom:4px}
+  .edu-card .school{color:var(--node);font-weight:600;font-size:14px}
+  .edu-card .when{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--packet);margin:5px 0 10px}
+  .edu-card p{color:var(--muted);font-size:13.5px}
+
+  .mono-line{font-family:'IBM Plex Mono',monospace;font-size:13.5px;color:var(--muted);margin-top:30px}
+  .mono-line a{color:var(--node);text-decoration:none}
+  .mono-line a:hover{color:var(--packet)}
+
+  footer{position:relative;z-index:2;border-top:1px solid var(--line);padding:24px;text-align:center;background:var(--ink);
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted)}
+
+  @media(max-width:640px){
+    .chapter{height:190vh}
+    .chapter.tall{height:210vh}
+    .impact li{font-size:14px}
+    .card{flex-basis:280px}
+    .panelize{padding:24px 14px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .pin-inner{opacity:1 !important;transform:none !important}
+    .scroll-hint,.status-pill::before{animation:none}
+    .chapter{height:auto;min-height:100vh}
+    .pin{position:relative;height:auto;min-height:100vh}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+
+<nav>
+  <a class="logo" href="#ch0"><b>raj</b>@edge:~$</a>
+  <div style="display:flex;gap:10px;align-items:center"><a class="top-cta" style="background:transparent;border:1px solid var(--line);color:var(--text)" href="index.html">⌂ modes</a><a class="top-cta" href="mailto:rxk40660@ucmo.edu?subject=Opportunity%20for%20Rajasekhar">hire me</a></div>
+</nav>
+
+<div class="dots" aria-label="Chapter navigation">
+  <a href="#ch0" data-dot="0" aria-label="Intro"></a>
+  <a href="#ch1" data-dot="1" aria-label="Zoho"></a>
+  <a href="#ch2" data-dot="2" aria-label="Streaming impact"></a>
+  <a href="#ch3" data-dot="3" aria-label="WebRTC"></a>
+  <a href="#ch4" data-dot="4" aria-label="Projects"></a>
+  <a href="#ch5" data-dot="5" aria-label="Skills"></a>
+  <a href="#ch6" data-dot="6" aria-label="Education"></a>
+  <a href="#ch7" data-dot="7" aria-label="Contact"></a>
+</div>
+
+<!-- CH 0 · ARRIVAL -->
+<section class="chapter" id="ch0">
+  <div class="pin">
+    <div class="pin-inner center">
+      <div class="status-pill">Available now · M.S. Computer Science completed May 2026</div>
+      <h1>Rajasekhar Reddy<br>Kothapalli</h1>
+      <p class="lead">Backend &amp; Systems Engineer. Welcome to my city — every district ahead is a chapter of my work. Walk with me.</p>
+      <div class="hero-stats">
+        <span><b>40%</b>faster streaming at Zoho</span>
+        <span><b>2+ yrs</b>production experience</span>
+        <span><b>Now</b>available full-time</span>
+      </div>
+    </div>
+    <div class="scroll-hint">scroll — let's take a walk ↓</div>
+  </div>
+</section>
+
+<!-- CH 1 · ZOHO DISTRICT -->
+<section class="chapter" id="ch1">
+  <div class="pin">
+    <div class="pin-inner center">
+      <div class="panelize">
+        <div class="eyebrow">District 01 · Zoho · 2022—2024</div>
+        <h2>Two years inside one of India's<br>largest SaaS companies.</h2>
+        <p class="lead">Member Technical Staff on large-scale Video-on-Demand and WebRTC platforms. These towers? Think of them as the production systems I helped run — distributed, regional, always on.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CH 2 · THE 40% -->
+<section class="chapter" id="ch2">
+  <div class="pin">
+    <div class="pin-inner center">
+      <div class="eyebrow">District 02 · Streaming impact</div>
+      <div class="big-stat">40%</div>
+      <div class="big-stat-label">FASTER VIDEO FETCH &amp; RENDER — FOR EVERY USER</div>
+      <ul class="impact">
+        <li><b>Redesigned file-fetching workflows</b> and backend media pipelines to cut fetch and render times by ~40%.</li>
+        <li><b>Reduced startup latency</b> with fMP4 (Fragmented MP4) — videos start faster, play smoother.</li>
+        <li><b>Consistent quality on any network</b> via adaptive bitrate streaming and optimized segment delivery.</li>
+        <li><b>Brought content closer to users</b> with Point-of-Presence (PoP) edge servers for VOD and livestreaming.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CH 3 · WEBRTC -->
+<section class="chapter" id="ch3">
+  <div class="pin">
+    <div class="pin-inner center">
+      <div class="eyebrow">District 03 · WebRTC &amp; distributed file systems</div>
+      <h2>Keeping a thousand copies<br><span class="accent">perfectly in sync.</span></h2>
+      <ul class="impact">
+        <li><b>Enabled real-time file access</b> by building MetaFile Manager and FileWatcher over a distributed file system.</li>
+        <li><b>Made file sharing tamper-proof</b> with integrity validation that detects and blocks data tampering in transit.</li>
+        <li><b>Increased fault tolerance under concurrent usage</b> by optimizing File-Copy and File-Sync inside WebRTC.</li>
+        <li><b>Resolved production bottlenecks</b> with cross-functional teams, debugging system-level issues at scale.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CH 4 · PROJECT DISTRICT -->
+<section class="chapter tall" id="ch4">
+  <div class="pin">
+    <div class="pin-inner center">
+      <div class="eyebrow">District 04 · Projects</div>
+      <h2>Built to learn, shipped to work.</h2>
+      <div class="rail" aria-label="Project cards, scroll horizontally">
+        <article class="card">
+          <div class="tag">Desktop · AI · Privacy</div>
+          <h3>WhisperFlowApp</h3>
+          <p>Real-time speech-to-text that runs 100% offline — Whisper via Whisper.cpp in a .NET 8 WPF app. Zero audio leaves the machine: privacy by architecture.</p>
+          <div class="stack"><span class="chip">C#</span><span class="chip">.NET 8</span><span class="chip">Whisper.cpp</span></div>
+          <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/WhisperFlowApp" target="_blank" rel="noopener">view code →</a>
+        </article>
+        <article class="card">
+          <div class="tag">Blockchain · Research</div>
+          <h3>TrustVault</h3>
+          <p>Decentralized proof-of-ownership on the Sui blockchain with IPFS storage — my graduate blockchain research turned into working code.</p>
+          <div class="stack"><span class="chip">Sui</span><span class="chip">IPFS</span><span class="chip">Web3</span></div>
+        </article>
+        <article class="card">
+          <div class="tag">Full-Stack · Web</div>
+          <h3>Appliance-Warehouse</h3>
+          <p>Full-stack inventory platform: authentication, sessions, inventory tracking, and dynamic pricing logic — built end-to-end.</p>
+          <div class="stack"><span class="chip">Flask</span><span class="chip">Python</span><span class="chip">JavaScript</span></div>
+          <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/Appliance-Warehouse" target="_blank" rel="noopener">view code →</a>
+        </article>
+        <article class="card">
+          <div class="tag">Networking · Security</div>
+          <h3>Secure Chat</h3>
+          <p>Anonymous messaging with encrypted WebSocket transport — the same secure-transmission thinking I used for file integrity at Zoho.</p>
+          <div class="stack"><span class="chip">Java</span><span class="chip">WebSockets</span></div>
+          <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/Secure-Chat" target="_blank" rel="noopener">view code →</a>
+        </article>
+        <article class="card">
+          <div class="tag">Systems · OS Internals</div>
+          <h3>Custom UNIX Shell</h3>
+          <p>A working shell from scratch: process management, piping, I/O redirection, auto-completion — proof of real OS understanding.</p>
+          <div class="stack"><span class="chip">Python</span><span class="chip">OS</span></div>
+          <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/LinuxShell" target="_blank" rel="noopener">view code →</a>
+        </article>
+        <article class="card">
+          <div class="tag">Hackathon · Team</div>
+          <h3>KnowYourPrice</h3>
+          <p>Built at HackMidwest 2024 — idea to working demo in a weekend, under pressure, with a team.</p>
+          <div class="stack"><span class="chip">Java</span><span class="chip">HackMidwest '24</span></div>
+          <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/KnowYourPrice" target="_blank" rel="noopener">view code →</a>
+        </article>
+        <article class="card">
+          <div class="tag">Biometrics · ML</div>
+          <h3>Iris-Pay</h3>
+          <p>Payment authentication by iris recognition — a Scikit-Learn prototype exploring biometrics at the point of sale.</p>
+          <div class="stack"><span class="chip">Python</span><span class="chip">Scikit-Learn</span></div>
+        </article>
+        <article class="card">
+          <div class="tag">Mobile · Android</div>
+          <h3>Battery Alarm</h3>
+          <p>Android utility that alerts at full charge — small scope, fully shipped, solving a real everyday problem.</p>
+          <div class="stack"><span class="chip">Java</span><span class="chip">Android</span></div>
+          <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/Battery_Alarm" target="_blank" rel="noopener">view code →</a>
+        </article>
+      </div>
+      <div class="rail-hint">← drag or scroll the cards →</div>
+    </div>
+  </div>
+</section>
+
+<!-- CH 5 · SKILLS -->
+<section class="chapter" id="ch5">
+  <div class="pin">
+    <div class="pin-inner center">
+      <div class="eyebrow">District 05 · Skills</div>
+      <h2>The toolkit.</h2>
+      <p class="lead">Everything here comes from shipped work at Zoho or completed projects — not a keyword wishlist.</p>
+      <div class="skill-wall">
+        <span class="chip hot">Java</span><span class="chip hot">Python</span><span class="chip hot">Distributed Systems</span>
+        <span class="chip hot">System Design</span><span class="chip">C#</span><span class="chip">JavaScript</span>
+        <span class="chip">Spring Boot</span><span class="chip">Flask</span><span class="chip">Django</span><span class="chip">.NET / WPF</span>
+        <span class="chip">REST APIs</span><span class="chip">WebSockets</span><span class="chip">gRPC</span><span class="chip">Microservices</span>
+        <span class="chip">MySQL</span><span class="chip">MongoDB</span><span class="chip">Redis</span><span class="chip">Oracle</span>
+        <span class="chip">Multithreading</span><span class="chip">CI/CD</span><span class="chip">Load Testing (Locust)</span>
+        <span class="chip">Git / GitHub</span><span class="chip">Azure DevOps</span><span class="chip">Linux</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CH 6 · EDUCATION -->
+<section class="chapter" id="ch6">
+  <div class="pin">
+    <div class="pin-inner center">
+      <div class="eyebrow">District 06 · Education</div>
+      <h2>A decade of formal CS training.</h2>
+      <div class="edu-row">
+        <div class="edu-card">
+          <h3>M.S. Computer Science — Completed</h3>
+          <div class="school">University of Central Missouri</div>
+          <div class="when">2024 — 2026</div>
+          <p>Research Assistant, blockchain-based research. Distributed Systems, Advanced Algorithms, Software Engineering.</p>
+        </div>
+        <div class="edu-card">
+          <h3>B.Tech Computer Science</h3>
+          <div class="school">Krishna University, Machilipatnam</div>
+          <div class="when">2019 — 2022</div>
+          <p>Led team projects in Java, Python, and Flask. Strong performance in software development and networking.</p>
+        </div>
+        <div class="edu-card">
+          <h3>Diploma, Software Engineering</h3>
+          <div class="school">Govt. Polytechnic College, Addanki</div>
+          <div class="when">2016 — 2019</div>
+          <p>Three-year technical diploma — the start of nearly a decade of formal computer science training.</p>
+        </div>
+        <div class="edu-card">
+          <h3>Certifications</h3>
+          <div class="school">NPTEL · ICET · IIT Hyderabad</div>
+          <div class="when">&nbsp;</div>
+          <p>Python for Data Science (Elite + Silver, NPTEL) · Hardware &amp; Networking Diploma (A+, ICET) · Ethical Hacking workshop (IIT Hyderabad).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CH 7 · THE CORE / CONTACT -->
+<section class="chapter" id="ch7">
+  <div class="pin">
+    <div class="pin-inner center">
+      <div class="eyebrow">District 07 · Contact</div>
+      <h2>Hiring for backend, streaming,<br>or platform teams?</h2>
+      <p class="lead">You've walked the whole city: 40% faster streaming at Zoho, production WebRTC work, M.S. completed and available now. I reply fast — usually same day.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="mailto:rxk40660@ucmo.edu?subject=Opportunity%20for%20Rajasekhar">Email me</a>
+        <a class="btn btn-ghost" href="Raj_resume.pdf" download>Download résumé</a>
+        <a class="btn btn-ghost" href="https://www.linkedin.com/in/rajasekhar-reddy-kothapalli-8a5245196/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn btn-ghost" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="mono-line">
+        <a href="mailto:rxk40660@ucmo.edu">rxk40660@ucmo.edu</a> · +1 (913) 413-4174 · Overland Park, KS · open to relocation
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Rajasekhar Reddy Kothapalli · a walkable 3D world built with Three.js</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ================= WORLD SETUP ================= */
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+
+  // sunset sky gradient
+  const skyCanvas=document.createElement('canvas');
+  skyCanvas.width=2;skyCanvas.height=512;
+  const sctx=skyCanvas.getContext('2d');
+  const g=sctx.createLinearGradient(0,0,0,512);
+  g.addColorStop(0,'#241a4d');
+  g.addColorStop(.45,'#5b3a78');
+  g.addColorStop(.72,'#c96a73');
+  g.addColorStop(1,'#ff9a63');
+  sctx.fillStyle=g;sctx.fillRect(0,0,2,512);
+  scene.background=new THREE.CanvasTexture(skyCanvas);
+  scene.fog=new THREE.Fog(0xc96a73, 60, 240);
+
+  const camera=new THREE.PerspectiveCamera(58,1,0.1,600);
+
+  // lights — warm sunset
+  scene.add(new THREE.HemisphereLight(0xffd9b0,0x5b3a78,0.95));
+  const sun=new THREE.DirectionalLight(0xffc08a,1.05);
+  sun.position.set(-40,55,-80);
+  scene.add(sun);
+
+  // seeded random so the city is the same on every visit
+  let seed=20260610;
+  const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646;};
+
+  /* ================= ROAD & GROUND ================= */
+  const ROAD_LEN=560;                  // walk distance
+  const ground=new THREE.Mesh(
+    new THREE.PlaneGeometry(600,ROAD_LEN+400),
+    new THREE.MeshLambertMaterial({color:0x8a5a72})
+  );
+  ground.rotation.x=-Math.PI/2;
+  ground.position.z=-ROAD_LEN/2;
+  scene.add(ground);
+
+  const road=new THREE.Mesh(
+    new THREE.PlaneGeometry(10,ROAD_LEN+120),
+    new THREE.MeshLambertMaterial({color:0x2c2142})
+  );
+  road.rotation.x=-Math.PI/2;
+  road.position.set(0,0.02,-ROAD_LEN/2);
+  scene.add(road);
+
+  // glowing lane lines = data conduits
+  const laneMat=new THREE.MeshBasicMaterial({color:0xffb454});
+  for(let z=4;z<ROAD_LEN;z+=9){
+    const dash=new THREE.Mesh(new THREE.PlaneGeometry(0.32,3.4),laneMat);
+    dash.rotation.x=-Math.PI/2;
+    dash.position.set(0,0.04,-z);
+    scene.add(dash);
+  }
+
+  /* ================= CITY (server towers) ================= */
+  const towerColors=[0x7c4a66,0x4a5d7c,0x9c5a48,0x5d4a7c,0x4a7c6e];
+  const winGeo=new THREE.PlaneGeometry(0.55,0.55);
+  const winMat=new THREE.MeshBasicMaterial({color:0xffcf8a});
+  const winMatCyan=new THREE.MeshBasicMaterial({color:0x9fe6ff});
+
+  function tower(x,z,big){
+    const w=3+rnd()*4, d=3+rnd()*4, h=(big?14:5)+rnd()*(big?22:9);
+    const m=new THREE.Mesh(
+      new THREE.BoxGeometry(w,h,d),
+      new THREE.MeshLambertMaterial({color:towerColors[(rnd()*towerColors.length)|0]})
+    );
+    m.position.set(x,h/2,z);
+    scene.add(m);
+    // glowing windows on the road-facing side
+    const side=x<0?1:-1;
+    const cols=Math.max(1,(w/1.4)|0), rows=Math.max(2,(h/2.2)|0);
+    for(let c=0;c<cols;c++)for(let r=0;r<rows;r++){
+      if(rnd()<0.45)continue;
+      const win=new THREE.Mesh(winGeo,rnd()<0.85?winMat:winMatCyan);
+      win.position.set(
+        x+side*(w/2+0.02),
+        1.6+r*2.2,
+        z-d/2+0.9+c*1.4
+      );
+      win.rotation.y=side*Math.PI/2;
+      scene.add(win);
+    }
+  }
+  // towers lining the road, denser in the Zoho district (z 60-200)
+  for(let z=14;z<ROAD_LEN-20;z+=7+rnd()*6){
+    const big=z>55&&z<205;
+    tower(-(9+rnd()*16),-z,big);
+    tower( (9+rnd()*16),-z,big);
+    if(rnd()<0.35)tower(-(28+rnd()*18),-z-3,false);
+    if(rnd()<0.35)tower( (28+rnd()*18),-z-3,false);
+  }
+
+  /* ---- trees (low-poly) ---- */
+  const trunkMat=new THREE.MeshLambertMaterial({color:0x6e4634});
+  const leafMat=new THREE.MeshLambertMaterial({color:0xd1766b});
+  const leafMat2=new THREE.MeshLambertMaterial({color:0xe8956d});
+  for(let i=0;i<70;i++){
+    const z=-(10+rnd()*(ROAD_LEN-20));
+    const x=(rnd()<.5?-1:1)*(7+rnd()*4);
+    const t=new THREE.Group();
+    const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.22,1.2,5),trunkMat);
+    trunk.position.y=0.6;
+    const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(0.9+rnd()*0.5,0),rnd()<.5?leafMat:leafMat2);
+    crown.position.y=1.8;
+    t.add(trunk,crown);
+    t.position.set(x,0,z);
+    scene.add(t);
+  }
+
+  /* ---- PoP antenna towers with blinking lights (streaming district) ---- */
+  const blinkers=[];
+  function antenna(x,z){
+    const grp=new THREE.Group();
+    const mast=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.3,16,6),new THREE.MeshLambertMaterial({color:0x3a2c52}));
+    mast.position.y=8;grp.add(mast);
+    const dish=new THREE.Mesh(new THREE.SphereGeometry(0.9,8,6,0,Math.PI),new THREE.MeshLambertMaterial({color:0xd8c8e8,side:THREE.DoubleSide}));
+    dish.position.set(0.7,12,0);dish.rotation.z=-0.7;grp.add(dish);
+    const light=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,6),new THREE.MeshBasicMaterial({color:0xff5a5a}));
+    light.position.y=16.2;grp.add(light);
+    blinkers.push(light);
+    grp.position.set(x,0,z);
+    scene.add(grp);
+  }
+  antenna(-14,-150);antenna(16,-175);antenna(-18,-195);
+
+  /* ---- district gates: glowing arches at chapter boundaries ---- */
+  const CH=8;
+  const gateMatA=new THREE.MeshBasicMaterial({color:0xffb454});
+  const gateMatB=new THREE.MeshLambertMaterial({color:0x3a2c52});
+  for(let i=1;i<CH;i++){
+    const z=-(i*ROAD_LEN/CH);
+    const gate=new THREE.Group();
+    const p1=new THREE.Mesh(new THREE.BoxGeometry(0.8,9,0.8),gateMatB);p1.position.set(-5.4,4.5,0);
+    const p2=p1.clone();p2.position.x=5.4;
+    const beam=new THREE.Mesh(new THREE.BoxGeometry(11.6,0.5,0.5),gateMatA);beam.position.y=9;
+    gate.add(p1,p2,beam);
+    gate.position.z=z;
+    scene.add(gate);
+  }
+
+  /* ---- THE CORE: glowing sphere at the end of the road ---- */
+  const core=new THREE.Mesh(new THREE.IcosahedronGeometry(7,1),
+    new THREE.MeshBasicMaterial({color:0xffb454,wireframe:true}));
+  core.position.set(0,9,-ROAD_LEN-28);
+  scene.add(core);
+  const coreInner=new THREE.Mesh(new THREE.IcosahedronGeometry(4.4,1),
+    new THREE.MeshBasicMaterial({color:0xfff0d0}));
+  coreInner.position.copy(core.position);
+  scene.add(coreInner);
+
+  /* ---- data packets as road traffic ---- */
+  const packets=[];
+  const pktGeo=new THREE.SphereGeometry(0.28,6,6);
+  for(let i=0;i<26;i++){
+    const dir=rnd()<.5?1:-1;
+    const p=new THREE.Mesh(pktGeo,new THREE.MeshBasicMaterial({color:dir>0?0xffb454:0x9fe6ff}));
+    p.userData={lane:dir*3.4,dir,speed:14+rnd()*20,z:-rnd()*ROAD_LEN};
+    scene.add(p);packets.push(p);
+  }
+
+  /* ================= THE AVATAR (Raj: red plaid blazer, white outfit) ================= */
+  const avatar=new THREE.Group();
+
+  // plaid texture for the blazer
+  const plaidCanvas=document.createElement('canvas');
+  plaidCanvas.width=plaidCanvas.height=64;
+  const px=plaidCanvas.getContext('2d');
+  px.fillStyle='#e03434';px.fillRect(0,0,64,64);
+  px.strokeStyle='rgba(255,255,255,.75)';px.lineWidth=2;
+  for(let i=8;i<64;i+=16){px.beginPath();px.moveTo(i,0);px.lineTo(i,64);px.stroke();
+    px.beginPath();px.moveTo(0,i);px.lineTo(64,i);px.stroke();}
+  px.strokeStyle='rgba(255,255,255,.3)';px.lineWidth=1;
+  for(let i=0;i<64;i+=16){px.beginPath();px.moveTo(i,0);px.lineTo(i,64);px.stroke();
+    px.beginPath();px.moveTo(0,i);px.lineTo(64,i);px.stroke();}
+  const plaidTex=new THREE.CanvasTexture(plaidCanvas);
+  plaidTex.wrapS=plaidTex.wrapT=THREE.RepeatWrapping;
+
+  const blazerMat=new THREE.MeshLambertMaterial({map:plaidTex});
+  const whiteMat=new THREE.MeshLambertMaterial({color:0xf2efe8});
+  const skinMat=new THREE.MeshLambertMaterial({color:0xa9745a});
+  const hairMat=new THREE.MeshLambertMaterial({color:0x241a17});
+
+  // torso: white tee under red blazer
+  const torso=new THREE.Mesh(new THREE.BoxGeometry(0.94,1.05,0.5),blazerMat);
+  torso.position.y=1.62;avatar.add(torso);
+  const tee=new THREE.Mesh(new THREE.BoxGeometry(0.4,1.0,0.54),whiteMat);
+  tee.position.set(0,1.62,0.01);avatar.add(tee);
+
+  // head + hair + beard hint
+  const head=new THREE.Mesh(new THREE.BoxGeometry(0.52,0.56,0.5),skinMat);
+  head.position.y=2.48;avatar.add(head);
+  const hair=new THREE.Mesh(new THREE.BoxGeometry(0.56,0.26,0.54),hairMat);
+  hair.position.y=2.76;avatar.add(hair);
+  const hairBack=new THREE.Mesh(new THREE.BoxGeometry(0.56,0.34,0.18),hairMat);
+  hairBack.position.set(0,2.58,-0.18);avatar.add(hairBack);
+  const beard=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.14,0.1),hairMat);
+  beard.position.set(0,2.27,0.21);avatar.add(beard);
+
+  // limbs (pivot at top so they swing)
+  function limb(w,h,d,mat,x,y){
+    const pivot=new THREE.Group();pivot.position.set(x,y,0);
+    const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+    m.position.y=-h/2;pivot.add(m);
+    avatar.add(pivot);return pivot;
+  }
+  const armL=limb(0.22,0.92,0.24,blazerMat,-0.6,2.1);
+  const armR=limb(0.22,0.92,0.24,blazerMat, 0.6,2.1);
+  const legL=limb(0.27,1.06,0.3,whiteMat,-0.22,1.08);
+  const legR=limb(0.27,1.06,0.3,whiteMat, 0.22,1.08);
+
+  avatar.position.set(0,0,0);
+  avatar.rotation.y=Math.PI; // walking into the scene (-z)
+  scene.add(avatar);
+
+  /* ================= SCROLL → JOURNEY ================= */
+  const chapters=[...document.querySelectorAll('.chapter')];
+  const dots=[...document.querySelectorAll('[data-dot]')];
+  let chapterIdx=0,localT=0,globalP=0;
+
+  function readScroll(){
+    const vh=window.innerHeight;
+    const max=document.documentElement.scrollHeight-vh;
+    globalP=Math.min(1,Math.max(0,window.scrollY/Math.max(1,max)));
+    chapterIdx=0;localT=0;
+    for(let i=0;i<chapters.length;i++){
+      const r=chapters[i].getBoundingClientRect();
+      if(r.top<=0&&r.bottom>vh){chapterIdx=i;localT=Math.min(1,Math.max(0,(-r.top)/(r.height-vh)));break;}
+      if(r.top>0){chapterIdx=Math.max(0,i-1);localT=1;break;}
+      chapterIdx=i;localT=1;
+    }
+    chapters.forEach((ch,i)=>{
+      const inner=ch.querySelector('.pin-inner');
+      if(!inner)return;
+      if(reduced){inner.style.opacity=1;return;}
+      let o=0,ty=36;
+      if(i===chapterIdx){
+        const tIn=Math.min(1,localT/0.2);
+        const tOut=i===chapters.length-1?0:Math.min(1,Math.max(0,(localT-0.86)/0.14));
+        o=tIn*(1-tOut);
+        ty=(1-tIn)*36-tOut*30;
+      }
+      inner.style.opacity=o.toFixed(3);
+      inner.style.transform=`translateY(${ty.toFixed(1)}px)`;
+    });
+    dots.forEach((d,i)=>d.classList.toggle('active',i===chapterIdx));
+  }
+  window.addEventListener('scroll',readScroll,{passive:true});
+
+  let mouseX=0,mouseY=0;
+  window.addEventListener('mousemove',e=>{
+    mouseX=e.clientX/window.innerWidth-.5;
+    mouseY=e.clientY/window.innerHeight-.5;
+  });
+  function resize(){
+    renderer.setSize(window.innerWidth,window.innerHeight,false);
+    camera.aspect=window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize',resize);
+  resize();readScroll();
+
+  /* ================= RENDER LOOP ================= */
+  let clock=0,walkPhase=0,avatarZ=0,prevAvatarZ=0;
+  const WALK_END=ROAD_LEN-14; // stop before the core
+
+  function animate(){
+    requestAnimationFrame(animate);
+    clock+=0.016;
+
+    // avatar target position from scroll (eased follow)
+    const targetZ=(reduced?0.25:globalP)*WALK_END;
+    avatarZ+=(targetZ-avatarZ)*0.06;
+    const speed=Math.abs(avatarZ-prevAvatarZ);
+    prevAvatarZ=avatarZ;
+
+    avatar.position.z=-avatarZ;
+    avatar.position.x=Math.sin(avatarZ*0.05)*0.6; // gentle lane sway
+    avatar.position.y=Math.abs(Math.sin(walkPhase*2))*0.05*Math.min(1,speed*6);
+
+    // walk cycle scaled by actual movement speed
+    walkPhase+=0.04+speed*1.15;
+    const amp=Math.min(0.62,speed*3.4+0.02);
+    legL.rotation.x=Math.sin(walkPhase)*amp;
+    legR.rotation.x=-Math.sin(walkPhase)*amp;
+    armL.rotation.x=-Math.sin(walkPhase)*amp*0.85;
+    armR.rotation.x=Math.sin(walkPhase)*amp*0.85;
+
+    // chase camera with mouse parallax
+    const camTargetZ=avatar.position.z+11.5;
+    camera.position.x+= (avatar.position.x+mouseX*4 - camera.position.x)*0.06;
+    camera.position.y+= (4.6 - mouseY*1.8 - camera.position.y)*0.06;
+    camera.position.z+= (camTargetZ - camera.position.z)*0.06;
+    camera.lookAt(avatar.position.x*0.5, 2.4, avatar.position.z-9);
+
+    // packets flowing along the data road
+    for(const p of packets){
+      p.userData.z-=p.userData.dir*p.userData.speed*0.016;
+      if(p.userData.z<-ROAD_LEN)p.userData.z=0;
+      if(p.userData.z>0)p.userData.z=-ROAD_LEN;
+      p.position.set(p.userData.lane,0.35,p.userData.z);
+    }
+
+    // antenna blink + core pulse
+    const blink=(Math.sin(clock*4)+1)/2;
+    blinkers.forEach((b,i)=>b.material.color.setHSL(0,0.9,0.3+0.4*((Math.sin(clock*4+i*2)+1)/2)));
+    core.rotation.y=clock*0.3;
+    coreInner.scale.setScalar(1+Math.sin(clock*2)*0.06);
+
+    renderer.render(scene,camera);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>

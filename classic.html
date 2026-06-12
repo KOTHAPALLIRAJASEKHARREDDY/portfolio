@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rajasekhar Reddy Kothapalli — Backend & Distributed Systems Engineer</title>
+<meta name="description" content="Backend & systems engineer with 2+ years at Zoho building large-scale VOD streaming, WebRTC, and edge PoP platforms — cut fetch & render times 40%. M.S. Computer Science completed May 2026. Available now.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d1321;--panel:rgba(20,27,46,.72);--line:rgba(122,143,180,.18);
+    --text:#e8ecf4;--muted:#8b94a8;--packet:#ffb454;--node:#5cc8ff;--ok:#4ade80;--radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--ink);color:var(--text);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:16px;line-height:1.65;overflow-x:hidden}
+  ::selection{background:var(--packet);color:var(--ink)}
+  a:focus-visible{outline:2px solid var(--node);outline-offset:3px;border-radius:4px}
+  #scene{position:fixed;inset:0;z-index:0;display:block}
+  .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 40%,transparent 40%,rgba(13,19,33,.55) 100%)}
+  .wrap{position:relative;z-index:2;max-width:1060px;margin:0 auto;padding:0 24px}
+  section{padding:110px 0}
+  nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;background:linear-gradient(rgba(13,19,33,.85),rgba(13,19,33,0));backdrop-filter:blur(2px)}
+  .logo{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--node);letter-spacing:.04em;text-decoration:none}
+  .logo b{color:var(--text)}
+  .nav-links{display:flex;gap:24px;align-items:center}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+  .nav-links a:hover{color:var(--packet)}
+  .nav-links a.modes{font-family:'IBM Plex Mono',monospace;font-size:12.5px;border:1px solid var(--line);padding:7px 14px;border-radius:999px;color:var(--text)}
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:80px}
+  .status-pill{display:inline-flex;align-items:center;gap:9px;width:max-content;font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+    color:#7ee2a8;border:1px solid rgba(126,226,168,.35);border-radius:999px;padding:7px 16px;margin-bottom:22px;background:rgba(126,226,168,.06)}
+  .status-pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.12em;color:var(--node);text-transform:uppercase;margin-bottom:18px}
+  .eyebrow::before{content:"▸ ";color:var(--packet)}
+  h1{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(2.3rem,6vw,4.2rem);line-height:1.05;letter-spacing:-.02em;max-width:840px}
+  h1 .accent{color:var(--packet)}
+  .hero p.sub{margin-top:24px;max-width:580px;color:var(--muted);font-size:1.08rem}
+  .hero p.sub b{color:var(--text)}
+  .hero-stats{display:flex;gap:38px;margin-top:42px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted)}
+  .hero-stats span b{display:block;font-size:1.5rem;color:var(--text);font-family:'Sora',sans-serif;font-weight:700}
+  .hero-cta{margin-top:44px;display:flex;gap:16px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:13px 26px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;transition:transform .2s,box-shadow .2s}
+  .btn-primary{background:var(--packet);color:var(--ink)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,180,84,.35)}
+  .btn-ghost{border:1px solid var(--line);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--node);color:var(--node)}
+  .scroll-hint{margin-top:64px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);animation:bob 2.4s ease-in-out infinite;width:max-content}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+  h2{font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(1.7rem,3.6vw,2.4rem);letter-spacing:-.01em;margin-bottom:14px}
+  .section-head p{color:var(--muted);max-width:620px;margin-bottom:46px}
+  .section-head p a{color:var(--node)}
+  .xp-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:38px 40px;backdrop-filter:blur(8px);margin-bottom:28px}
+  .xp-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+  .xp-top h3{font-family:'Sora',sans-serif;font-size:1.25rem;font-weight:700}
+  .xp-top .when{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--packet)}
+  .xp-card .org{color:var(--node);font-weight:600;margin-bottom:18px}
+  .xp-block{margin-top:22px}
+  .xp-block h4{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--node);margin-bottom:10px}
+  .xp-block ul{list-style:none}
+  .xp-block li{padding-left:22px;position:relative;color:#c4cbda;margin-bottom:9px;font-size:15px}
+  .xp-block li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:2px;background:var(--packet)}
+  .xp-block li b{color:var(--text)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px;backdrop-filter:blur(8px);
+    transform-style:preserve-3d;transition:border-color .25s;will-change:transform}
+  .card:hover{border-color:rgba(92,200,255,.45)}
+  .card .tag{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--packet);letter-spacing:.08em;text-transform:uppercase}
+  .card h3{font-family:'Sora',sans-serif;font-size:1.12rem;font-weight:700;margin:10px 0 12px}
+  .card p{color:var(--muted);font-size:14.5px}
+  .card .stack{margin-top:18px;display:flex;flex-wrap:wrap;gap:7px}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:4px 11px;color:#aeb7c9}
+  .card .repo{display:inline-block;margin-top:16px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--node);text-decoration:none}
+  .card .repo:hover{color:var(--packet)}
+  .skill-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+  .skill-group{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;backdrop-filter:blur(8px)}
+  .skill-group h4{font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--node);margin-bottom:14px}
+  .skill-group .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:760px){.two-col{grid-template-columns:1fr}.nav-links a:not(.modes){display:none}}
+  .edu-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:32px;backdrop-filter:blur(8px)}
+  .edu-card h3{font-family:'Sora',sans-serif;font-size:1.1rem;margin-bottom:4px}
+  .edu-card .school{color:var(--node);font-weight:600;font-size:15px}
+  .edu-card .when{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--packet);margin:6px 0 14px}
+  .edu-card p,.edu-card li{color:var(--muted);font-size:14.5px}
+  .edu-card ul{list-style:none;margin-top:8px}
+  .edu-card li{padding-left:18px;position:relative;margin-bottom:7px}
+  .edu-card li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:2px;background:var(--node)}
+  .edu-card li b{color:var(--text)}
+  .contact{text-align:center;padding:130px 0 150px}
+  .contact h2{font-size:clamp(2rem,5vw,3.2rem)}
+  .contact p{color:var(--muted);max-width:540px;margin:16px auto 40px}
+  .contact-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+  .contact .mono{font-family:'IBM Plex Mono',monospace;font-size:13.5px;color:var(--muted);margin-top:34px}
+  .contact .mono a{color:var(--node);text-decoration:none}
+  .contact .mono a:hover{color:var(--packet)}
+  footer{position:relative;z-index:2;border-top:1px solid var(--line);padding:26px 24px;text-align:center;
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted)}
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(max-width:640px){section{padding:80px 0}.xp-card{padding:28px 22px}}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.scroll-hint{animation:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+
+<nav>
+  <a class="logo" href="#top"><b>raj</b>@edge:~$</a>
+  <div class="nav-links">
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+    <a class="modes" href="index.html">⌂ modes</a>
+  </div>
+</nav>
+
+<div class="wrap" id="top">
+
+  <header class="hero">
+    <div class="status-pill">Available now · M.S. Computer Science completed May 2026</div>
+    <div class="eyebrow">Backend &amp; Systems Engineer · Distributed Systems · Low-Latency Platforms</div>
+    <h1>I made video streaming <span class="accent">40% faster</span> for Zoho. Your systems could be next.</h1>
+    <p class="sub">Rajasekhar Reddy Kothapalli — software engineer with <b>2+ years of production experience</b> at Zoho building large-scale VOD and WebRTC platforms, with a freshly completed M.S. in Computer Science. I enjoy solving performance-critical problems: latency, reliability, and scalable system design.</p>
+    <div class="hero-stats">
+      <span><b>40%</b>faster VOD fetch &amp; render at Zoho</span>
+      <span><b>2+ yrs</b>industry experience (Member Technical Staff)</span>
+      <span><b>Now</b>available for full-time — M.S. completed</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#experience">See proof of work</a>
+      <a class="btn btn-ghost" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-ghost" href="https://www.linkedin.com/in/rajasekhar-reddy-kothapalli-8a5245196/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <div class="scroll-hint">scroll ↓ · drag the network behind me</div>
+  </header>
+
+  <section id="experience">
+    <div class="section-head reveal">
+      <div class="eyebrow">01 · Experience</div>
+      <h2>Production experience, not just coursework</h2>
+      <p>Two years as Member Technical Staff at Zoho — one of India's largest SaaS companies — owning streaming and file-sync infrastructure used by customers worldwide.</p>
+    </div>
+
+    <div class="xp-card reveal">
+      <div class="xp-top"><h3>Member Technical Staff</h3><span class="when">Aug 2022 — Aug 2024</span></div>
+      <div class="org">Zoho Corporation</div>
+      <div class="xp-block">
+        <h4>Video-on-Demand · impact</h4>
+        <ul>
+          <li><b>Cut fetch and render times by 40%</b> by engineering advanced file-fetching techniques — directly improving playback for every VOD user.</li>
+          <li><b>Reduced startup latency</b> by introducing fMP4 (Fragmented MP4) streaming, so videos start faster and play smoother.</li>
+          <li><b>Lowered transmission latency</b> with custom data compression, making playback more responsive over real-world networks.</li>
+          <li><b>Delivered consistent quality on any connection</b> by optimizing segment delivery and adaptive bitrate streaming across devices and network conditions.</li>
+          <li><b>Brought content closer to users</b> by designing Point-of-Presence (PoP) edge servers for VOD and livestreaming — regional delivery, minimal latency.</li>
+        </ul>
+      </div>
+      <div class="xp-block">
+        <h4>WebRTC &amp; Distributed File Systems · impact</h4>
+        <ul>
+          <li><b>Enabled reliable real-time file access</b> by implementing MetaFile Manager and FileWatcher over a distributed file system.</li>
+          <li><b>Made file sharing tamper-proof</b> with integrity validation that detects and blocks data tampering in transit.</li>
+          <li><b>Improved sync accuracy and reliability</b> by optimizing File-Copy and File-Sync inside WebRTC across distributed systems, increasing fault tolerance under concurrent usage.</li>
+          <li><b>Resolved production bottlenecks</b> by partnering with cross-functional teams to debug system-level issues and ship scalable fixes.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="xp-card reveal">
+      <div class="xp-top"><h3>Research Assistant</h3><span class="when">2024 — 2026</span></div>
+      <div class="org">University of Central Missouri</div>
+      <div class="xp-block">
+        <h4>Blockchain &amp; AI Research</h4>
+        <ul>
+          <li>Blockchain-based research under faculty supervision, focused on decentralized proof-of-ownership systems.</li>
+          <li>Collaborating on AI-driven applications, secure communication systems, and system-level software development.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-head reveal">
+      <div class="eyebrow">02 · Projects</div>
+      <h2>Built to learn, shipped to work</h2>
+      <p>Each project targets a skill that matters in production — privacy, encryption, OS internals, ML, decentralization. Source on <a href="https://github.com/KOTHAPALLIRAJASEKHARREDDY" target="_blank" rel="noopener">GitHub</a>.</p>
+    </div>
+    <div class="grid">
+      <article class="card tilt reveal">
+        <div class="tag">Desktop · AI · Privacy</div>
+        <h3>WhisperFlowApp</h3>
+        <p>Real-time speech-to-text that runs 100% offline — OpenAI's Whisper via Whisper.cpp inside a .NET 8 WPF desktop app. Zero audio ever leaves the machine: privacy by architecture, not by policy.</p>
+        <div class="stack"><span class="chip">C#</span><span class="chip">.NET 8</span><span class="chip">WPF</span><span class="chip">Whisper.cpp</span></div>
+        <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/WhisperFlowApp" target="_blank" rel="noopener">view code →</a>
+      </article>
+      <article class="card tilt reveal">
+        <div class="tag">Blockchain · Research</div>
+        <h3>TrustVault</h3>
+        <p>Decentralized proof-of-ownership for digital content on the Sui blockchain with IPFS storage — verifiable, transparent, and censorship-resistant. Extends my graduate blockchain research into working code.</p>
+        <div class="stack"><span class="chip">Sui</span><span class="chip">IPFS</span><span class="chip">Web3</span></div>
+      </article>
+      <article class="card tilt reveal">
+        <div class="tag">Full-Stack · Web</div>
+        <h3>Appliance-Warehouse</h3>
+        <p>Full-stack inventory platform with authentication, session management, inventory tracking, and dynamic pricing logic — built end-to-end during my graduate studies.</p>
+        <div class="stack"><span class="chip">Python</span><span class="chip">Flask</span><span class="chip">JavaScript</span><span class="chip">HTML/CSS</span></div>
+        <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/Appliance-Warehouse" target="_blank" rel="noopener">view code →</a>
+      </article>
+      <article class="card tilt reveal">
+        <div class="tag">Hackathon · Team</div>
+        <h3>KnowYourPrice</h3>
+        <p>Built at HackMidwest 2024 — a Java application developed under hackathon pressure with a team, from idea to working demo in a weekend.</p>
+        <div class="stack"><span class="chip">Java</span><span class="chip">HackMidwest 2024</span></div>
+        <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/KnowYourPrice" target="_blank" rel="noopener">view code →</a>
+      </article>
+      <article class="card tilt reveal">
+        <div class="tag">Networking · Security</div>
+        <h3>Secure Chat</h3>
+        <p>Anonymous messaging with no registration and encrypted WebSocket transport — applying the same secure-transmission thinking I used for file integrity at Zoho.</p>
+        <div class="stack"><span class="chip">Java</span><span class="chip">WebSockets</span><span class="chip">Encryption</span></div>
+        <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/Secure-Chat" target="_blank" rel="noopener">view code →</a>
+      </article>
+      <article class="card tilt reveal">
+        <div class="tag">Systems · OS Internals</div>
+        <h3>Custom UNIX Shell</h3>
+        <p>A working shell from scratch: process management, piping, I/O redirection, and auto-completion. The kind of project you only finish if you actually understand how an OS runs programs.</p>
+        <div class="stack"><span class="chip">Python</span><span class="chip">OS Internals</span></div>
+        <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/LinuxShell" target="_blank" rel="noopener">view code →</a>
+      </article>
+      <article class="card tilt reveal">
+        <div class="tag">Biometrics · ML</div>
+        <h3>Iris-Pay</h3>
+        <p>Payment authentication by iris recognition — a Scikit-Learn prototype exploring whether biometrics can replace passwords at the point of sale.</p>
+        <div class="stack"><span class="chip">Python</span><span class="chip">Scikit-Learn</span><span class="chip">Computer Vision</span></div>
+      </article>
+      <article class="card tilt reveal">
+        <div class="tag">Mobile · Android</div>
+        <h3>Battery Alarm</h3>
+        <p>An Android utility that alerts at full charge to prevent overcharging — small scope, fully shipped, solving a real everyday problem.</p>
+        <div class="stack"><span class="chip">Java</span><span class="chip">Android</span></div>
+        <a class="repo" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/Battery_Alarm" target="_blank" rel="noopener">view code →</a>
+      </article>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-head reveal">
+      <div class="eyebrow">03 · Skills</div>
+      <h2>The toolkit</h2>
+      <p>Everything here comes from shipped work at Zoho or completed projects — not a keyword wishlist.</p>
+    </div>
+    <div class="skill-cols">
+      <div class="skill-group reveal"><h4>Languages</h4>
+        <div class="chips"><span class="chip">Java</span><span class="chip">Python</span><span class="chip">C#</span><span class="chip">C</span><span class="chip">JavaScript</span><span class="chip">PHP</span></div></div>
+      <div class="skill-group reveal"><h4>Backend &amp; APIs</h4>
+        <div class="chips"><span class="chip">REST APIs</span><span class="chip">WebSockets</span><span class="chip">gRPC</span><span class="chip">Microservices</span><span class="chip">Client-Server Architecture</span></div></div>
+      <div class="skill-group reveal"><h4>Frameworks</h4>
+        <div class="chips"><span class="chip">Spring Boot</span><span class="chip">Flask</span><span class="chip">Django</span><span class="chip">.NET / WPF</span><span class="chip">Node.js</span></div></div>
+      <div class="skill-group reveal"><h4>Databases &amp; Storage</h4>
+        <div class="chips"><span class="chip">MySQL</span><span class="chip">Oracle</span><span class="chip">MongoDB</span><span class="chip">Redis</span><span class="chip">SQL Optimization</span></div></div>
+      <div class="skill-group reveal"><h4>Engineering Practice</h4>
+        <div class="chips"><span class="chip">System Design</span><span class="chip">Distributed Systems</span><span class="chip">Multithreading</span><span class="chip">Design Patterns</span><span class="chip">CI/CD</span><span class="chip">Code Reviews</span></div></div>
+      <div class="skill-group reveal"><h4>Testing &amp; Tools</h4>
+        <div class="chips"><span class="chip">Unit &amp; Integration Testing</span><span class="chip">Load Testing (Locust)</span><span class="chip">Git / GitHub</span><span class="chip">Azure DevOps</span><span class="chip">Postman</span><span class="chip">Linux</span></div></div>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="section-head reveal">
+      <div class="eyebrow">04 · Education &amp; Certifications</div>
+      <h2>Foundation</h2>
+    </div>
+    <div class="two-col">
+      <div class="edu-card reveal">
+        <h3>M.S. Computer Science — Completed</h3>
+        <div class="school">University of Central Missouri</div>
+        <div class="when">Aug 2024 — May 2026</div>
+        <p><b style="color:var(--text)">Research Assistant</b> in blockchain-based research under faculty supervision. Coursework: Advanced Algorithms, Data Structures, Distributed Systems, Database Management, Software Engineering.</p>
+      </div>
+      <div class="edu-card reveal">
+        <h3>B.Tech Computer Science</h3>
+        <div class="school">Krishna University, Machilipatnam</div>
+        <div class="when">Jul 2019 — Apr 2022</div>
+        <p><b style="color:var(--text)">Led team projects</b> building web and mobile applications in Java, Python, and Flask. Strong performance in core software development and networking subjects.</p>
+      </div>
+      <div class="edu-card reveal">
+        <h3>Diploma, Computer Software Engineering</h3>
+        <div class="school">Government Polytechnic College, Addanki</div>
+        <div class="when">Jul 2016 — Apr 2019</div>
+        <p>Three-year technical diploma — nearly a decade of formal computer science training from diploma through master's.</p>
+      </div>
+      <div class="edu-card reveal">
+        <h3>Certifications</h3>
+        <div class="school">&nbsp;</div>
+        <ul>
+          <li><b>Python for Data Science</b> — Elite + Silver Grade, NPTEL India</li>
+          <li><b>Diploma in Hardware &amp; Networking</b> — A+ Grade, ICET</li>
+          <li><b>Ethical Hacking &amp; Cybersecurity</b> — Workshop, IIT Hyderabad</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="reveal">
+      <div class="eyebrow" style="width:max-content;margin:0 auto 18px">05 · Contact</div>
+      <h2>Hiring for backend, streaming,<br>or platform teams?</h2>
+      <p>You've seen the proof: 40% faster streaming at Zoho, production WebRTC work, and an M.S. in Computer Science — completed and available now. I reply fast, usually same day.</p>
+      <div class="contact-links">
+        <a class="btn btn-primary" href="mailto:rxk40660@ucmo.edu?subject=Opportunity%20for%20Rajasekhar">Email me</a>
+        <a class="btn btn-ghost" href="Raj_resume.pdf" download>Download résumé</a>
+        <a class="btn btn-ghost" href="https://www.linkedin.com/in/rajasekhar-reddy-kothapalli-8a5245196/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn btn-ghost" href="https://github.com/KOTHAPALLIRAJASEKHARREDDY" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="mono">
+        <a href="mailto:rxk40660@ucmo.edu">rxk40660@ucmo.edu</a> · +1 (913) 413-4174 · Overland Park, KS · open to relocation
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>© 2026 Rajasekhar Reddy Kothapalli · built with Three.js · packets in transit: <span id="pktCount">0</span></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canvas=document.getElementById('scene');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  scene.fog=new THREE.FogExp2(0x0d1321,0.028);
+  const camera=new THREE.PerspectiveCamera(60,1,0.1,200);
+  camera.position.set(0,2,26);
+  const group=new THREE.Group();scene.add(group);
+
+  const CLUSTERS=7,NODES_PER=11,nodes=[],clusterCenters=[];
+  for(let c=0;c<CLUSTERS;c++){
+    const ang=(c/CLUSTERS)*Math.PI*2,r=11+Math.random()*4;
+    clusterCenters.push(new THREE.Vector3(Math.cos(ang)*r,(Math.random()-.5)*8,Math.sin(ang)*r*.65));
+  }
+  const nodeGeo=new THREE.SphereGeometry(0.14,10,10);
+  const nodeMat=new THREE.MeshBasicMaterial({color:0x5cc8ff});
+  const hubMat=new THREE.MeshBasicMaterial({color:0xffb454});
+  clusterCenters.forEach((center,ci)=>{
+    for(let i=0;i<NODES_PER;i++){
+      const isHub=i===0;
+      const m=new THREE.Mesh(nodeGeo,isHub?hubMat:nodeMat);
+      if(isHub){m.position.copy(center);m.scale.setScalar(2.1);}
+      else m.position.set(center.x+(Math.random()-.5)*6,center.y+(Math.random()-.5)*5,center.z+(Math.random()-.5)*6);
+      m.userData={cluster:ci,isHub,base:m.position.clone(),phase:Math.random()*Math.PI*2};
+      group.add(m);nodes.push(m);
+    }
+  });
+  const edges=[],linePositions=[];
+  function addEdge(a,b){edges.push([a,b]);linePositions.push(a.position.x,a.position.y,a.position.z,b.position.x,b.position.y,b.position.z);}
+  nodes.forEach(n=>{
+    if(n.userData.isHub)return;
+    const hub=nodes.find(h=>h.userData.isHub&&h.userData.cluster===n.userData.cluster);
+    addEdge(n,hub);
+    const sibs=nodes.filter(s=>s.userData.cluster===n.userData.cluster&&s!==n&&!s.userData.isHub);
+    if(sibs.length&&Math.random()<0.45)addEdge(n,sibs[Math.floor(Math.random()*sibs.length)]);
+  });
+  const hubs=nodes.filter(n=>n.userData.isHub);
+  for(let i=0;i<hubs.length;i++){
+    addEdge(hubs[i],hubs[(i+1)%hubs.length]);
+    if(i%2===0)addEdge(hubs[i],hubs[(i+3)%hubs.length]);
+  }
+  const lineGeo=new THREE.BufferGeometry();
+  lineGeo.setAttribute('position',new THREE.Float32BufferAttribute(linePositions,3));
+  group.add(new THREE.LineSegments(lineGeo,new THREE.LineBasicMaterial({color:0x3a5f8a,transparent:true,opacity:.32})));
+
+  const PACKETS=reduced?0:70;
+  const pktGeo=new THREE.SphereGeometry(0.09,6,6);
+  const packets=[];
+  for(let i=0;i<PACKETS;i++){
+    const p=new THREE.Mesh(pktGeo,new THREE.MeshBasicMaterial({color:0xffb454,transparent:true}));
+    p.userData={edge:edges[Math.floor(Math.random()*edges.length)],t:Math.random(),speed:.004+Math.random()*.009};
+    group.add(p);packets.push(p);
+  }
+  document.getElementById('pktCount').textContent=PACKETS;
+
+  const dustGeo=new THREE.BufferGeometry();const dustPos=[];
+  for(let i=0;i<400;i++)dustPos.push((Math.random()-.5)*90,(Math.random()-.5)*60,(Math.random()-.5)*70);
+  dustGeo.setAttribute('position',new THREE.Float32BufferAttribute(dustPos,3));
+  const dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({color:0x33415e,size:0.12}));
+  scene.add(dust);
+
+  let mouseX=0,mouseY=0,dragging=false,lastX=0,lastY=0,dragRX=0,dragRY=0,scrollT=0;
+  window.addEventListener('mousemove',e=>{
+    mouseX=(e.clientX/window.innerWidth-.5);mouseY=(e.clientY/window.innerHeight-.5);
+    if(dragging){dragRY+=(e.clientX-lastX)*.005;dragRX+=(e.clientY-lastY)*.005;lastX=e.clientX;lastY=e.clientY;}
+  });
+  canvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;});
+  window.addEventListener('pointerup',()=>dragging=false);
+  window.addEventListener('scroll',()=>{scrollT=window.scrollY/Math.max(1,(document.body.scrollHeight-window.innerHeight));},{passive:true});
+  function resize(){renderer.setSize(window.innerWidth,window.innerHeight,false);camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();}
+  window.addEventListener('resize',resize);resize();
+
+  const tmpA=new THREE.Vector3(),tmpB=new THREE.Vector3();let clock=0;
+  function animate(){
+    requestAnimationFrame(animate);clock+=0.016;
+    if(!reduced){
+      for(const n of nodes)if(!n.userData.isHub)n.position.y=n.userData.base.y+Math.sin(clock*.8+n.userData.phase)*.35;
+      for(const p of packets){
+        const u=p.userData;u.t+=u.speed;
+        if(u.t>=1){u.t=0;u.edge=edges[Math.floor(Math.random()*edges.length)];u.speed=.004+Math.random()*.009;}
+        tmpA.copy(u.edge[0].position);tmpB.copy(u.edge[1].position);
+        p.position.lerpVectors(tmpA,tmpB,u.t);p.material.opacity=Math.sin(u.t*Math.PI);
+      }
+      const pos=lineGeo.attributes.position.array;
+      for(let i=0;i<edges.length;i++){
+        const[a,b]=edges[i];
+        pos[i*6]=a.position.x;pos[i*6+1]=a.position.y;pos[i*6+2]=a.position.z;
+        pos[i*6+3]=b.position.x;pos[i*6+4]=b.position.y;pos[i*6+5]=b.position.z;
+      }
+      lineGeo.attributes.position.needsUpdate=true;
+    }
+    const targetRY=mouseX*.25+dragRY+scrollT*Math.PI*.9;
+    const targetRX=mouseY*.15+dragRX;
+    group.rotation.y+=(targetRY-group.rotation.y)*.05;
+    group.rotation.x+=(targetRX-group.rotation.x)*.05;
+    camera.position.z=26-scrollT*6;
+    dust.rotation.y+=.0004;
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  if(!reduced&&matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.tilt').forEach(card=>{
+      card.addEventListener('mousemove',e=>{
+        const r=card.getBoundingClientRect();
+        const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+        card.style.transform=`perspective(800px) rotateY(${px*8}deg) rotateX(${-py*8}deg) translateY(-3px)`;
+      });
+      card.addEventListener('mouseleave',()=>{card.style.transform='';});
+    });
+  }
+})();
+</script>
+</body>
+</html>

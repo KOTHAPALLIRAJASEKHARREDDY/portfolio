@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>raj@portfolio:~$ — Terminal Mode</title>
+<meta name="description" content="Interactive terminal portfolio of Rajasekhar Reddy Kothapalli — type 'experience', 'projects', 'skills' and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e16;--green:#7ee787;--amber:#ffb454;--cyan:#5cc8ff;
+    --text:#d7e0ea;--muted:#7d8a9c;--red:#ff6b6b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'IBM Plex Mono',monospace;font-size:14.5px;line-height:1.55;
+  }
+  /* scanline / CRT vibe */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:6;
+    background:radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.45) 100%);
+  }
+  #term{
+    height:100%;overflow-y:auto;padding:26px 22px 40vh;
+    max-width:980px;margin:0 auto;
+    overscroll-behavior:contain;
+  }
+  .line{white-space:pre-wrap;word-break:break-word}
+  .green{color:var(--green)}
+  .amber{color:var(--amber)}
+  .cyan{color:var(--cyan)}
+  .muted{color:var(--muted)}
+  .red{color:var(--red)}
+  .b{font-weight:700}
+  a{color:var(--cyan)}
+  a:hover{color:var(--amber)}
+  .prompt-row{display:flex;flex-wrap:wrap;align-items:baseline}
+  .ps1{color:var(--green);white-space:pre}
+  #cmdline{
+    background:transparent;border:none;outline:none;color:var(--text);
+    font:inherit;flex:1;min-width:120px;caret-color:var(--green);
+  }
+  .hintbar{
+    position:fixed;bottom:0;left:0;right:0;z-index:7;
+    background:rgba(10,14,22,.92);border-top:1px solid rgba(125,138,156,.25);
+    padding:8px 16px;font-size:12.5px;color:var(--muted);text-align:center;
+  }
+  .hintbar b{color:var(--amber);font-weight:500}
+  @media(max-width:640px){body{font-size:13px}#term{padding:18px 12px 45vh}}
+</style>
+</head>
+<body>
+<div id="term" aria-live="polite"></div>
+<div class="hintbar">type <b>help</b> for commands · <b>Tab</b> autocomplete · <b>↑/↓</b> history · <b>menu</b> to switch modes</div>
+
+<script>
+(function(){
+  const term=document.getElementById('term');
+  const E=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let history=[],hIdx=-1,booted=false;
+
+  const BANNER=
+"  ____      _    _ \n"+
+" |  _ \\    / \\  | |    Rajasekhar Reddy Kothapalli\n"+
+" | |_) |  / _ \\ _   | |    Backend & Systems Engineer\n"+
+" |  _ <  / ___ \\ |_| |    \n"+
+" |_| \\_\\/_/   \\_\\___/     v2026.06 · Overland Park, KS\n";
+
+  const banner=
+"   ███████╗   █████╗     ██╗\n"+
+"   ██╔══██║  ██╔══██╗    ██║\n"+
+"   ███████║  ███████║    ██║\n"+
+"   ██╔═██╔╝  ██╔══██║██  ██║\n"+
+"   ██║ ╚██╗  ██║  ██║╚████╔╝\n"+
+"   ╚═╝  ╚═╝  ╚═╝  ╚═╝ ╚═══╝\n";
+
+  const DATA={
+    help:
+`<span class="amber b">available commands</span>
+  <span class="green">about</span>        who is raj?
+  <span class="green">experience</span>   2+ years at Zoho — VOD, WebRTC, edge servers
+  <span class="green">projects</span>     8 shipped projects with repo links
+  <span class="green">skills</span>       languages, frameworks, systems
+  <span class="green">education</span>    M.S. (completed) → B.Tech → Diploma
+  <span class="green">certs</span>        certifications
+  <span class="green">contact</span>      email / phone / location
+  <span class="green">resume</span>       download the PDF résumé
+  <span class="green">github</span>       open GitHub profile
+  <span class="green">linkedin</span>     open LinkedIn profile
+  <span class="green">neofetch</span>     system info, but it's me
+  <span class="green">menu</span>         back to mode selection (classic / game / terminal)
+  <span class="green">clear</span>        clear the screen
+<span class="muted">hint: there may be one or two undocumented commands…</span>`,
+
+    about:
+`<span class="amber b">whoami</span>
+Rajasekhar Reddy Kothapalli — Backend & Systems Engineer.
+2+ years of production experience at <span class="cyan">Zoho</span> building large-scale
+Video-on-Demand and WebRTC platforms. M.S. in Computer Science
+<span class="green">completed May 2026</span> (University of Central Missouri), with research
+in blockchain. I enjoy performance-critical problems: latency,
+reliability, and scalable system design.
+
+<span class="green b">STATUS: available now for full-time SWE roles.</span>`,
+
+    experience:
+`<span class="amber b">~/experience</span>
+
+<span class="b">Member Technical Staff — Zoho Corporation</span> <span class="muted">(Aug 2022 – Aug 2024)</span>
+<span class="cyan">Video-on-Demand:</span>
+  ▸ <span class="b">Cut fetch & render times 40%</span> by redesigning file-fetching
+    workflows and backend media pipelines
+  ▸ Reduced startup latency with fMP4 (Fragmented MP4) streaming
+  ▸ Adaptive bitrate + optimized segment delivery for consistent
+    quality across networks and devices
+  ▸ Designed Point-of-Presence (PoP) edge servers for VOD and
+    livestreaming — regional delivery, minimal latency
+<span class="cyan">WebRTC & Distributed File Systems:</span>
+  ▸ Built MetaFile Manager + FileWatcher for real-time file access
+    over a distributed file system
+  ▸ File integrity validation — detects & blocks tampering in transit
+  ▸ Optimized File-Copy / File-Sync: better fault tolerance under
+    concurrent usage
+  ▸ Debugged production bottlenecks with cross-functional teams
+
+<span class="b">Research Assistant — University of Central Missouri</span> <span class="muted">(2024 – 2026)</span>
+  ▸ Blockchain-based research (decentralized proof-of-ownership)
+  ▸ AI-driven applications & secure communication systems
+
+<span class="muted">next: try</span> <span class="green">projects</span>`,
+
+    projects:
+`<span class="amber b">~/projects</span> <span class="muted">(8 total)</span>
+
+<span class="b">1. WhisperFlowApp</span> <span class="muted">[C#, .NET 8, Whisper.cpp]</span>
+   Offline real-time speech-to-text — zero audio leaves the machine
+   <a href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/WhisperFlowApp" target="_blank" rel="noopener">github.com/KOTHAPALLIRAJASEKHARREDDY/WhisperFlowApp</a>
+<span class="b">2. TrustVault</span> <span class="muted">[Sui, IPFS, Web3]</span>
+   Decentralized proof-of-ownership for digital content
+<span class="b">3. Appliance-Warehouse</span> <span class="muted">[Flask, Python, JS]</span>
+   Full-stack inventory platform: auth, sessions, dynamic pricing
+   <a href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/Appliance-Warehouse" target="_blank" rel="noopener">github.com/…/Appliance-Warehouse</a>
+<span class="b">4. KnowYourPrice</span> <span class="muted">[Java, HackMidwest 2024]</span>
+   Hackathon build — idea to demo in a weekend
+   <a href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/KnowYourPrice" target="_blank" rel="noopener">github.com/…/KnowYourPrice</a>
+<span class="b">5. Secure Chat</span> <span class="muted">[Java, WebSockets, Encryption]</span>
+   Anonymous, registration-free encrypted messaging
+   <a href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/Secure-Chat" target="_blank" rel="noopener">github.com/…/Secure-Chat</a>
+<span class="b">6. Custom UNIX Shell</span> <span class="muted">[Python]</span>
+   Piping, I/O redirection, auto-completion — like this one, but real
+   <a href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/LinuxShell" target="_blank" rel="noopener">github.com/…/LinuxShell</a>
+<span class="b">7. Iris-Pay</span> <span class="muted">[Python, Scikit-Learn]</span>
+   Biometric payment authentication by iris recognition
+<span class="b">8. Battery Alarm</span> <span class="muted">[Java, Android]</span>
+   Full-charge alert utility — small scope, fully shipped
+   <a href="https://github.com/KOTHAPALLIRAJASEKHARREDDY/Battery_Alarm" target="_blank" rel="noopener">github.com/…/Battery_Alarm</a>`,
+
+    skills:
+`<span class="amber b">~/skills</span> <span class="muted">// from shipped work, not a wishlist</span>
+
+<span class="cyan">languages:</span>    Java · Python · C# · C · JavaScript · PHP
+<span class="cyan">backend:</span>      REST APIs · WebSockets · gRPC · Microservices
+<span class="cyan">frameworks:</span>   Spring Boot · Flask · Django · .NET/WPF · Node.js
+<span class="cyan">databases:</span>    MySQL · Oracle · MongoDB · Redis · SQL Optimization
+<span class="cyan">systems:</span>      Distributed Systems · System Design · Multithreading
+<span class="cyan">testing:</span>      Unit/Integration · Load Testing (Locust)
+<span class="cyan">tools:</span>        Git/GitHub · Azure DevOps · Postman · Linux · CI/CD`,
+
+    education:
+`<span class="amber b">~/education</span>
+
+<span class="b">M.S. Computer Science</span> — <span class="green">COMPLETED</span> <span class="muted">(2024–2026)</span>
+  University of Central Missouri
+  Research Assistant · Distributed Systems · Advanced Algorithms
+<span class="b">B.Tech Computer Science</span> <span class="muted">(2019–2022)</span>
+  Krishna University, Machilipatnam
+  Led team projects in Java, Python, Flask
+<span class="b">Diploma, Computer Software Engineering</span> <span class="muted">(2016–2019)</span>
+  Government Polytechnic College, Addanki
+
+<span class="muted">≈ a decade of formal CS training.</span>`,
+
+    certs:
+`<span class="amber b">~/certifications</span>
+  ▸ Python for Data Science — <span class="green">Elite + Silver</span>, NPTEL India
+  ▸ Hardware & Networking Diploma — <span class="green">A+ Grade</span>, ICET
+  ▸ Ethical Hacking & Cybersecurity — Workshop, IIT Hyderabad`,
+
+    contact:
+`<span class="amber b">~/contact</span>
+  email:    <a href="mailto:rxk40660@ucmo.edu">rxk40660@ucmo.edu</a>
+  phone:    +1 (913) 413-4174
+  location: Overland Park, KS <span class="muted">(open to relocation)</span>
+  github:   <a href="https://github.com/KOTHAPALLIRAJASEKHARREDDY" target="_blank" rel="noopener">github.com/KOTHAPALLIRAJASEKHARREDDY</a>
+  linkedin: <a href="https://www.linkedin.com/in/rajasekhar-reddy-kothapalli-8a5245196/" target="_blank" rel="noopener">linkedin.com/in/rajasekhar-reddy-kothapalli-8a5245196</a>
+
+<span class="green b">replies fast — usually same day.</span>`
+  };
+
+  function scrollBottom(){term.scrollTop=term.scrollHeight;}
+  function print(html,cls){
+    const d=document.createElement('div');
+    d.className='line'+(cls?' '+cls:'');
+    d.innerHTML=html;
+    term.insertBefore(d,promptRow);
+    scrollBottom();
+  }
+  async function typeOut(text,cls,cps){
+    const d=document.createElement('div');
+    d.className='line'+(cls?' '+cls:'');
+    term.insertBefore(d,promptRow);
+    for(let i=0;i<text.length;i++){
+      d.textContent+=text[i];
+      if(i%2===0)scrollBottom();
+      await new Promise(r=>setTimeout(r,cps||14));
+    }
+    scrollBottom();
+  }
+
+  /* ---- prompt ---- */
+  const promptRow=document.createElement('div');
+  promptRow.className='prompt-row';
+  promptRow.innerHTML='<span class="ps1">raj@portfolio:~$ </span>';
+  const input=document.createElement('input');
+  input.id='cmdline';input.autocomplete='off';input.spellcheck=false;
+  input.setAttribute('aria-label','terminal command input');
+  promptRow.appendChild(input);
+  term.appendChild(promptRow);
+  promptRow.style.display='none';
+
+  term.addEventListener('click',()=>input.focus());
+
+  const COMMANDS=['help','about','experience','projects','skills','education','certs','contact','resume','github','linkedin','neofetch','menu','clear','whoami','ls','sudo hire raj','exit'];
+
+  function run(raw){
+    const cmd=raw.trim();
+    print('<span class="ps1">raj@portfolio:~$ </span>'+E(cmd));
+    if(!cmd)return;
+    history.push(cmd);hIdx=history.length;
+    const c=cmd.toLowerCase();
+
+    if(c==='help')print(DATA.help);
+    else if(c==='about'||c==='whoami')print(DATA.about);
+    else if(c==='experience'||c==='exp')print(DATA.experience);
+    else if(c==='projects'||c==='project')print(DATA.projects);
+    else if(c==='skills'||c==='skill')print(DATA.skills);
+    else if(c==='education'||c==='edu')print(DATA.education);
+    else if(c==='certs'||c==='certifications')print(DATA.certs);
+    else if(c==='contact')print(DATA.contact);
+    else if(c==='resume'||c==='cv'){
+      print('fetching <span class="cyan">Raj_resume.pdf</span> … <span class="green">done.</span>');
+      const a=document.createElement('a');a.href='Raj_resume.pdf';a.download='';document.body.appendChild(a);a.click();a.remove();
+      print("<span class=\"muted\">(if nothing downloaded, the PDF isn't uploaded next to this file yet)</span>");
+    }
+    else if(c==='github'){print('opening <span class="cyan">GitHub</span> in a new tab…');window.open('https://github.com/KOTHAPALLIRAJASEKHARREDDY','_blank');}
+    else if(c==='linkedin'){print('opening <span class="cyan">LinkedIn</span> in a new tab…');window.open('https://www.linkedin.com/in/rajasekhar-reddy-kothapalli-8a5245196/','_blank');}
+    else if(c==='neofetch'){
+      print('<span class="amber">'+E(banner)+'</span>'+
+`<span class="cyan b">raj</span>@<span class="cyan b">portfolio</span>
+-----------------
+<span class="amber">OS:</span>       Human v1998 (Engineer build)
+<span class="amber">Host:</span>     Overland Park, KS
+<span class="amber">Kernel:</span>   Distributed-Systems 4.0
+<span class="amber">Uptime:</span>   2+ yrs production @ Zoho
+<span class="amber">Shell:</span>    Java · Python · C#
+<span class="amber">DE:</span>       Backend / Streaming / Edge
+<span class="amber">CPU:</span>      M.S. Computer Science (2026, completed)
+<span class="amber">GPU:</span>      40% faster VOD pipeline
+<span class="amber">Memory:</span>   8 shipped projects`);
+    }
+    else if(c==='menu'||c==='home'){print('returning to mode selection…');setTimeout(()=>location.href='index.html',500);}
+    else if(c==='game'){print('loading game mode…');setTimeout(()=>location.href='game.html',500);}
+    else if(c==='classic'){print('loading classic mode…');setTimeout(()=>location.href='classic.html',500);}
+    else if(c==='clear'){term.querySelectorAll('.line').forEach(l=>l.remove());}
+    else if(c==='ls')print('<span class="cyan">about/  experience/  projects/  skills/  education/  certs/  contact/</span>  <span class="green">resume.pdf</span>');
+    else if(c==='sudo hire raj'||c==='sudo hire'||c==='hire'){
+      print('<span class="green b">[sudo] permission granted.</span> opening mail client…');
+      setTimeout(()=>location.href='mailto:rxk40660@ucmo.edu?subject=Opportunity%20for%20Rajasekhar',600);
+    }
+    else if(c==='exit')print('<span class="muted">there is no escape. (try</span> <span class="green">menu</span><span class="muted"> instead)</span>');
+    else if(c==='rm -rf /')print('<span class="red">nice try.</span> my systems have fault tolerance, remember?');
+    else print(`<span class="red">command not found:</span> ${E(cmd)} — type <span class="green">help</span>`);
+  }
+
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){const v=input.value;input.value='';run(v);}
+    else if(e.key==='ArrowUp'){e.preventDefault();if(hIdx>0){hIdx--;input.value=history[hIdx];}}
+    else if(e.key==='ArrowDown'){e.preventDefault();if(hIdx<history.length-1){hIdx++;input.value=history[hIdx];}else{hIdx=history.length;input.value='';}}
+    else if(e.key==='Tab'){
+      e.preventDefault();
+      const v=input.value.toLowerCase();
+      if(!v)return;
+      const m=COMMANDS.filter(x=>x.startsWith(v));
+      if(m.length===1){input.value=m[0];}
+      else if(m.length>1)print('<span class="muted">'+m.join('   ')+'</span>');
+    }
+  });
+
+  /* ---- boot sequence ---- */
+  (async function boot(){
+    await typeOut('[boot] initializing raj.world kernel …',null,8);
+    await typeOut('[ ok ] mounting /experience  /projects  /skills',null,8);
+    await typeOut('[ ok ] edge servers online · latency nominal',null,8);
+    print('<span class="amber">'+E(banner)+'</span>');
+    await typeOut('Welcome to Rajasekhar Reddy\'s World — terminal mode.','green b',16);
+    print(`<span class="muted">Backend & Systems Engineer · 2+ yrs @ Zoho · M.S. CS (completed) · <span class="green">available now</span></span>`);
+    print(`type <span class="green b">help</span> to see commands — or jump straight to <span class="green">experience</span>`);
+    promptRow.style.display='flex';
+    input.focus();
+    booted=true;
+  })();
+})();
+</script>
+</body>
+</html>
